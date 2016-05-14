@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DatePicker
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/date_Picker_view"
+    android:calendarTextColor="@color/colorAccent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:calendarViewShown="false">
+
+</DatePicker>

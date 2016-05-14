@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.shituocheng.bihunewspaper.com.bihunewspaper">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <application
+        android:name=".AppController"
+        android:allowBackup="true"
+        android:icon="@drawable/icon"
+        android:label="逼乎日报"
+        android:logo="@drawable/icon"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".YesterdayStoryActivity">
+        </activity>
+        <activity android:name=".detailActivity">
+
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".ThemeDetailActivity">
+        </activity>
+        <activity android:name=".EditorDetailActivity">
+        </activity>
+        <activity android:name=".TotalCommentActivity">
+        </activity>
+    </application>
+
+</manifest>

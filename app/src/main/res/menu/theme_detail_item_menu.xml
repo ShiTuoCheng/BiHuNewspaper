@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:title="查看本日报主编"
+        android:id="@+id/editor_item">
+    </item>
+    <item
+        android:title="查看本报简介"
+        android:id="@+id/title_item"></item>
+
+</menu>

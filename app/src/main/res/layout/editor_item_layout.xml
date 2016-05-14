@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <com.shituocheng.bihunewspaper.com.bihunewspaper.CircularNetworkImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:padding="5dp"
+        android:id="@+id/editor_avatar"/>
+    <TextView
+        android:id="@+id/editor_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/editor_avatar"
+        android:text="本报主编id"
+        android:textSize="20dp"
+        android:textColor="#2e2e2e"
+        android:padding="5dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/editor_name"
+        android:layout_toRightOf="@id/editor_avatar"
+        android:id="@+id/editor_bio"
+        android:text="本报主编签名"
+        android:textColor="#737272"
+        android:textSize="15dp"
+        android:padding="5dp"/>
+
+</RelativeLayout>

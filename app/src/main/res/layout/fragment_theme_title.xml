@@ -1,0 +1,18 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_margin="5dp"
+             tools:context="com.shituocheng.bihunewspaper.com.bihunewspaper.ThemeTitleFragment"
+    android:background="#ffffff">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ListView
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:dividerHeight="10dp"
+        android:divider="#ffff"
+        android:id="@+id/themeTitle_listView">
+    </ListView>
+
+</FrameLayout>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/mainTitleItem"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="主页"/>
+        <item
+            android:id="@+id/themeTitleItem"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="主题日报"/>
+    </group>
+
+    <item android:title="关于">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="分享本应用"/>
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="评价本应用"/>
+        </menu>
+    </item>
+
+</menu>
