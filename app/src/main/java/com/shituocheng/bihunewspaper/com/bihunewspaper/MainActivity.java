@@ -1,12 +1,18 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
 import android.app.DatePickerDialog;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
 import android.view.MenuInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,6 +26,7 @@ import android.view.MenuItem;
 import android.widget.DatePicker;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity
@@ -93,6 +100,13 @@ public class MainActivity extends AppCompatActivity
     };
 
     private void updateDate(){
+
+        String yearStr = String.valueOf(calendar.get(Calendar.YEAR));
+
+        String monthStr = String.valueOf(calendar.get(Calendar.MONTH)+1);
+
+        String dayStr = String.valueOf(calendar.get(Calendar.DAY_OF_MONTH));
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
         String date = simpleDateFormat.format(calendar.getTime());
@@ -100,6 +114,12 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(MainActivity.this, YesterdayStoryActivity.class);
 
         intent.putExtra(DIALOG_DATE,date);
+
+        intent.putExtra("year",yearStr);
+
+        intent.putExtra("month",monthStr);
+
+        intent.putExtra("day",dayStr);
 
         startActivity(intent);
     }
@@ -117,9 +137,32 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_search_action, menu);
-        return super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.main_search_action, menu);
+        SearchView search = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        search.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, YesterdayStoryActivity.class)));
+        search.setQueryHint(getResources().getString(R.string.search_hint_name));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.about_item){
+            Intent intent = new Intent(MainActivity.this, AboutApplicationActivity.class);
+
+            startActivity(intent);
+        }
+        return true;
+    }
+
+    @Override
+    public void onNewIntent(Intent intent){
+        setIntent(intent);
+        if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            //now you can display the results
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

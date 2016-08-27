@@ -52,6 +52,7 @@ public class ThemeEditorAdapter extends ArrayAdapter<ThemeEditorModel> {
             viewHolder.name = (TextView)view.findViewById(R.id.editor_name);
             viewHolder.avatar_ImageView = (CircularNetworkImageView)view.findViewById(R.id.editor_avatar);
             viewHolder.bio = (TextView)view.findViewById(R.id.editor_bio);
+
             view.setTag(viewHolder);
         }else {
             view = convertView;

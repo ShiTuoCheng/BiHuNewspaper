@@ -2,17 +2,14 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             android:layout_margin="5dp"
              tools:context="com.shituocheng.bihunewspaper.com.bihunewspaper.ThemeTitleFragment"
-    android:background="#ffffff">
+    android:background="#ededed">
 
     <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:layout_height="match_parent"
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:dividerHeight="10dp"
-        android:divider="#ffff"
-        android:id="@+id/themeTitle_listView">
-    </ListView>
+        android:layout_height="match_parent"
+        android:id="@+id/recycler_view"
+        android:background="#ededed"/>
 
 </FrameLayout>

@@ -1,13 +1,18 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
+import android.support.v7.widget.Toolbar;
 import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +24,8 @@ import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +40,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import CustomAdapter.ThemeEditorAdapter;
+import Model.ThemeEditorModel;
 import Utility.Utilities;
 
 public class detailActivity extends AppCompatActivity {
@@ -46,7 +56,16 @@ public class detailActivity extends AppCompatActivity {
 
     public static final String commute_data = "commute_id";
 
+    private ShareActionProvider mShareActionProvider;
+
+    private ProgressDialog mProgressDialog;
+
     private final int RESULT_MESSAGE_BODY = 0;
+
+    private Toolbar mToolbar;
+
+    private ArrayList<ThemeEditorModel> mThemeEditorModels = new ArrayList<>();
+
     private final int RESULT_MESSAGE_TITLE = 1;
     private Handler mHandler = new Handler(){
         @Override
@@ -102,6 +121,8 @@ public class detailActivity extends AppCompatActivity {
 
                         }
                     });
+
+                    mProgressDialog.dismiss();
 
                     /*
                     mWebView.setWebViewClient(new WebViewClient(){
@@ -166,6 +187,13 @@ public class detailActivity extends AppCompatActivity {
         window.setFlags(flag, flag);
         setContentView(R.layout.activity_detail);
 
+
+        mProgressDialog = new ProgressDialog(this);
+
+        mProgressDialog.setMessage("正在载入");
+
+        mProgressDialog.show();
+
         ActionBar actionBar = getSupportActionBar();
 
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -229,7 +257,7 @@ public class detailActivity extends AppCompatActivity {
 
                         Log.d("CSS_STRINGBUILDER_RESUL",css);
 
-                        Map<String,String> map = new HashMap<String, String>();
+                        Map<String,String> map = new HashMap<>();
 
                         map.put("css",css);
 
@@ -281,6 +309,11 @@ public class detailActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main_story, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_item_share);
+
+        mShareActionProvider = (ShareActionProvider)MenuItemCompat.getActionProvider(item);
+
         return true;
     }
 
@@ -296,7 +329,7 @@ public class detailActivity extends AppCompatActivity {
         }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.share_item) {
+        if (id == R.id.menu_item_share) {
 
             return true;
         }else if (id == R.id.comment_item){
@@ -311,8 +344,115 @@ public class detailActivity extends AppCompatActivity {
 
             return true;
 
+        }else if (id == R.id.recommand_item){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    int id = getIntent().getIntExtra("idData",0);
+                    Log.d("IDDATA",String.valueOf(id));
+                    HttpURLConnection connection = null;
+                    InputStream inputStream = null;
+
+                    try{
+                        String urlString = "http://news-at.zhihu.com/api/4/story/"+ id +"/recommenders";
+                        connection = (HttpURLConnection)(new URL("http://news-at.zhihu.com/api/4/story/"+ "7101963" +"/recommenders")).openConnection();
+
+                        Log.d("RECOMMAND_NAME",urlString);
+                        connection.setConnectTimeout(3000);
+                        connection.setReadTimeout(3000);
+                        try{
+                            connection.setRequestMethod("GET");
+                            connection.connect();
+                            inputStream = connection.getInputStream();
+                            StringBuilder stringBuilder = new StringBuilder();
+                            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                            String line;
+                            while ((line = bufferedReader.readLine()) != null){
+                                stringBuilder.append(line);
+                            }
+                            inputStream.close();
+                            connection.disconnect();
+                            JSONObject jsonObject = new JSONObject(stringBuilder.toString());
+                            JSONArray jsonArray = jsonObject.getJSONArray("editors");
+
+                            if (mThemeEditorModels.size() == 0) {
+
+                                for (int i = 0; i < jsonArray.length(); i++) {
+
+                                    JSONObject eachJsonObj = jsonArray.getJSONObject(i);
+
+                                    ThemeEditorModel themeEditorModel = new ThemeEditorModel();
+
+                                    themeEditorModel.setAvatar(eachJsonObj.getString("avatar"));
+
+                                    themeEditorModel.setEditor_name(eachJsonObj.getString("name"));
+
+                                    themeEditorModel.setBio(eachJsonObj.getString("bio"));
+
+                                    mThemeEditorModels.add(themeEditorModel);
+                                }
+                            }
+
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    AlertDialog alertDialog = new AlertDialog.Builder(detailActivity.this).create();
+                                    alertDialog.show();
+                                    Window window = alertDialog.getWindow();
+                                    window.setContentView(R.layout.editor_listview_layout);
+
+                                    ListView listView = (ListView)window.findViewById(R.id.editor_listView);
+                                    final ThemeEditorAdapter themeEditorAdapter = new ThemeEditorAdapter(getApplicationContext(),R.layout.editor_item_layout,mThemeEditorModels);
+                                    listView.setAdapter(themeEditorAdapter);
+                                    themeEditorAdapter.notifyDataSetChanged();
+
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                                            ThemeEditorModel themeEditorModel = mThemeEditorModels.get(position);
+
+                                            String url = themeEditorModel.getNrl();
+
+                                            String name = themeEditorModel.getEditor_name();
+
+                                            Intent intent = new Intent(detailActivity.this, EditorDetailActivity.class);
+
+                                            intent.putExtra("url",url);
+
+                                            intent.putExtra("name", name);
+
+                                            startActivity(intent);
+                                        }
+                                    });
+
+                                }
+                            });
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchOtherData(){
+        HttpURLConnection connection = null;
+    }
+
+    private void showInternetError(){
+
+        mProgressDialog.dismiss();
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+
+        dialog.setTitle("网络连接出错");
     }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.shituocheng.bihunewspaper.com.bihunewspaper.AboutApplicationActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_textView"
+                android:padding="16dp"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:text="关于本应所用的API声明"
+                android:gravity="center"
+                />
+
+
+            <TextView
+                android:id="@+id/content_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                android:padding="16dp"
+                android:textSize="20dp"
+                android:textColor="#2e2e2e"
+                android:text="以下所有 API 均由 知乎（Zhihu.Inc） 提供，本人采取非正常手段获取。获取与共享之行为或有侵犯知乎权益的嫌疑。若被告知需停止共享与使用，本人会及时删除此页面与整个项目。
+请您暸解相关情况，并遵守知乎协议。"
+                android:layout_below="@id/title_textView"
+                android:layout_marginTop="16dp"/>
+
+            <TextView
+                android:id="@+id/subtitle_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content_textView"
+                android:padding="16dp"
+                android:textSize="30dp"
+                android:textColor="#2e2e2e"
+                android:text="本应用所使用的第三方库："/>
+
+            <TextView
+                android:id="@+id/first_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="1.Google官方所写的Volley库，用于抓取网络图片，还不阻塞主线程."
+                android:textColor="#2e2e2e"
+                android:textSize="20dp"
+                android:layout_below="@id/subtitle_textView"/>
+
+            <TextView
+                android:id="@+id/second_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:layout_below="@id/first_textView"
+                android:text="2.是痛了第三方fabbutton，已经添加到本项目中， 但是海未实现，后续版本会加入此功能。"
+                android:textSize="20dp"
+                android:textColor="#2e2e2e"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

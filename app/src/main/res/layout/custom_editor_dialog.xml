@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_textView"
+        android:text="你想跳转到哪里呢^^?"
+        android:layout_centerHorizontal="true"
+        android:textSize="20sp"
+        android:textColor="#2e2e2e"
+        android:textStyle="bold"
+        android:padding="10dp"/>
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_textView">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="跳转知乎主页"
+            android:textColor="#2e2e2e"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:id="@+id/zhihu_radioButton"
+            />
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/zhuye_radioButton"
+            android:text="跳转个人主页"
+            android:textSize="15sp"
+            android:textStyle="italic"
+            android:textColor="#2e2e2e"/>
+    </RadioGroup>
+</RelativeLayout>

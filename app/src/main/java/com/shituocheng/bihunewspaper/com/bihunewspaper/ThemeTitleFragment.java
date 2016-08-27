@@ -2,16 +2,22 @@ package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
 
 import android.app.ActionBar;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,9 +43,10 @@ import Utility.Utilities;
  * A simple {@link Fragment} subclass.
  */
 public class ThemeTitleFragment extends Fragment {
-    private ListView mListView;
+    private RecyclerView mRecyclerView;
     private ArrayList<ThemeTitleModel> mThemeTitleModels = new ArrayList<>();
     private ThemeTitleAdapter mThemeTitleAdapter;
+    private ProgressDialog mProgressDialog;
 
 
     public ThemeTitleFragment() {
@@ -56,8 +63,12 @@ public class ThemeTitleFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mListView = (ListView)getActivity().findViewById(R.id.themeTitle_listView);
+        mRecyclerView = (RecyclerView)getActivity().findViewById(R.id.recycler_view);
         // Inflate the layout for this fragment
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage("正在载入");
+        mProgressDialog.show();
+
         return inflater.inflate(R.layout.fragment_theme_title, container, false);
     }
 
@@ -116,14 +127,20 @@ public class ThemeTitleFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mListView = (ListView)getActivity().findViewById(R.id.themeTitle_listView);
-                                mThemeTitleAdapter = new ThemeTitleAdapter(getActivity(),R.layout.themetitlelayout,mThemeTitleModels);
-                                mListView.setAdapter(mThemeTitleAdapter);
+                                mRecyclerView = (RecyclerView)getActivity().findViewById(R.id.recycler_view);
+                                mRecyclerView.setHasFixedSize(true);
+                                mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
+
+                                mThemeTitleAdapter = new ThemeTitleAdapter(mThemeTitleModels);
+
+                                mRecyclerView.setAdapter(mThemeTitleAdapter);
+                                mRecyclerView.addItemDecoration(new ItemSpaceDivider(30));
                                 mThemeTitleAdapter.notifyDataSetChanged();
 
-                                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                mThemeTitleAdapter.setOnItemClickListener(new ThemeTitleAdapter.OnItemClickListener() {
                                     @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    public void OnItemClick(View view, int position) {
                                         ThemeTitleModel model = mThemeTitleModels.get(position);
 
                                         Intent intent = new Intent(getActivity(), ThemeDetailActivity.class);
@@ -131,7 +148,15 @@ public class ThemeTitleFragment extends Fragment {
 
                                         startActivity(intent);
                                     }
+
+                                    @Override
+                                    public void OnItemLongClick(View view, int position) {
+
+                                        Toast.makeText(getActivity(),"进去看看吧^_^",Toast.LENGTH_SHORT).show();
+                                    }
                                 });
+
+                                mProgressDialog.dismiss();
                             }
                         });
 
@@ -146,6 +171,24 @@ public class ThemeTitleFragment extends Fragment {
             }
         }).start();
 
+    }
+
+    private class ItemSpaceDivider extends RecyclerView.ItemDecoration{
+        private int space;
+
+        public ItemSpaceDivider(int space) {
+            this.space = space;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            outRect.left = space;
+            outRect.right = space;
+            outRect.bottom = space;
+            if (parent.getChildPosition(view) == 0){
+                outRect.top = space;
+            }
+        }
     }
 
 }

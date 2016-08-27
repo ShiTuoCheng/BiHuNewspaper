@@ -1,5 +1,6 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -9,12 +10,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -34,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import CustomAdapter.MyCustomAdapter;
 import CustomAdapter.ThemeDetailAdapter;
@@ -45,7 +49,11 @@ import Utility.Utilities;
 
 public class ThemeDetailActivity extends AppCompatActivity {
     private NetworkImageView mNetworkImageView;
+    private ProgressDialog mProgressDialog;
+
     private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
+
+    private List<ThemeEditorModel> themeModels = new ArrayList<>();
     private ArrayList<ThemeEditorModel> mThemeEditorModels = new ArrayList<>();
     private ArrayList<ThemeDetailModel> mThemeDetailModels = new ArrayList<>();
     private ThemeDetailAdapter mThemeDetailAdapter;
@@ -85,6 +93,11 @@ public class ThemeDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_theme_detail);
+
+        mProgressDialog = new ProgressDialog(ThemeDetailActivity.this);
+        mProgressDialog.setTitle("正在载入");
+        mProgressDialog.show();
+
         mSwipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.activity_main_swipe_refresh_layout);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -187,6 +200,7 @@ public class ThemeDetailActivity extends AppCompatActivity {
                     InputStream inputStream = null;
 
                     try{
+
                         connection = (HttpURLConnection)(new URL(Utilities.THEME_DETAIL_URL_NAME + id)).openConnection();
                         connection.setConnectTimeout(3000);
                         connection.setReadTimeout(3000);
@@ -219,6 +233,8 @@ public class ThemeDetailActivity extends AppCompatActivity {
 
                                     themeEditorModel.setBio(eachJsonObj.getString("bio"));
 
+                                    themeEditorModel.setEditor_id(eachJsonObj.getInt("id"));
+
                                     themeEditorModel.setNrl(eachJsonObj.getString("url"));
 
                                     mThemeEditorModels.add(themeEditorModel);
@@ -228,33 +244,73 @@ public class ThemeDetailActivity extends AppCompatActivity {
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    AlertDialog alertDialog = new AlertDialog.Builder(ThemeDetailActivity.this).create();
+                                    final AlertDialog alertDialog = new AlertDialog.Builder(ThemeDetailActivity.this).create();
                                     alertDialog.show();
-                                    Window window = alertDialog.getWindow();
+                                    mProgressDialog.show();
+                                    final Window window = alertDialog.getWindow();
                                     window.setContentView(R.layout.editor_listview_layout);
 
                                     ListView listView = (ListView)window.findViewById(R.id.editor_listView);
                                     final ThemeEditorAdapter themeEditorAdapter = new ThemeEditorAdapter(getApplicationContext(),R.layout.editor_item_layout,mThemeEditorModels);
                                     listView.setAdapter(themeEditorAdapter);
+                                    mProgressDialog.dismiss();
                                     themeEditorAdapter.notifyDataSetChanged();
 
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
 
-                                            ThemeEditorModel themeEditorModel = mThemeEditorModels.get(position);
+                                            alertDialog.dismiss();
 
-                                            String url = themeEditorModel.getNrl();
+                                            AlertDialog jumpDailog = new AlertDialog.Builder(ThemeDetailActivity.this).create();
 
-                                            String name = themeEditorModel.getEditor_name();
+                                            jumpDailog.show();
 
-                                            Intent intent = new Intent(ThemeDetailActivity.this, EditorDetailActivity.class);
+                                            Window window1 = jumpDailog.getWindow();
 
-                                            intent.putExtra("url",url);
+                                            window1.setContentView(R.layout.custom_editor_dialog);
 
-                                            intent.putExtra("name", name);
+                                            RadioButton zhihuButton = (RadioButton)window1.findViewById(R.id.zhihu_radioButton);
 
-                                            startActivity(intent);
+                                            RadioButton zhuyeButton = (RadioButton)window1.findViewById(R.id.zhuye_radioButton);
+                                            zhuyeButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    ThemeEditorModel model = mThemeEditorModels.get(position);
+
+                                                    int editor_id = model.getEditor_id();
+
+                                                    String name = model.getEditor_name();
+
+                                                    String editor_url = "http://news-at.zhihu.com/api/4/editor/" + editor_id + "/profile-page/android";
+
+                                                    Intent intent = new Intent(ThemeDetailActivity.this, EditorDetailActivity.class);
+
+                                                    intent.putExtra("name",name);
+
+                                                    intent.putExtra("editor_url",editor_url);
+
+                                                    startActivity(intent);
+                                                }
+                                            });
+
+                                            if (zhihuButton.isChecked()){
+                                                jumpDailog.dismiss();
+                                            }
+                                            zhihuButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    ThemeEditorModel themeEditorModel = mThemeEditorModels.get(position);
+
+                                                    String url = themeEditorModel.getNrl();
+                                                    String name = themeEditorModel.getEditor_name();
+                                                    Intent intent = new Intent(ThemeDetailActivity.this, EditorDetailActivity.class);
+                                                    intent.putExtra("url",url);
+                                                    intent.putExtra("name", name);
+
+                                                    startActivity(intent);
+                                                }
+                                            });
                                         }
                                     });
 
@@ -307,6 +363,7 @@ public class ThemeDetailActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                mProgressDialog.dismiss();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
@@ -372,7 +429,7 @@ public class ThemeDetailActivity extends AppCompatActivity {
 
 
                     }catch (ConnectException connectE){
-                        connectE.printStackTrace();
+                        networkError();
                     }catch (JSONException jsonE){
                         jsonE.printStackTrace();
                     }
@@ -381,6 +438,15 @@ public class ThemeDetailActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
 
+    private void networkError(){
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getApplicationContext());
+
+        dialog.setTitle("网络出错");
+
+        dialog.setMessage("网络出错，请检查网络连接");
+
+        dialog.show();
     }
 }

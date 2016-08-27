@@ -1,15 +1,18 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import CustomAdapter.CustomCommentsAdapter;
 import CustomAdapter.FragmentViewPagerAdapter;
 
 public class TotalCommentActivity extends AppCompatActivity {
@@ -24,41 +27,41 @@ public class TotalCommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_total_comment);
 
         ActionBar actionBar = getSupportActionBar();
-
         actionBar.setDisplayHomeAsUpEnabled(true);
-
         actionBar.setDisplayShowHomeEnabled(true);
+        actionBar.setTitle("本文评论");
+
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+
+        tabLayout.addTab(tabLayout.newTab().setText("本文长评论"));
+        tabLayout.addTab(tabLayout.newTab().setText("本文短评论"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         mViewPager = new ViewPager(this);
         mViewPager = (ViewPager)findViewById(R.id.comment_viewPager);
-        mLongCommentFragment = new LongCommentFragment();
-        mShortCommentFragment = new ShortCommentFragment();
-        mFragments.add(mLongCommentFragment);
-        mFragments.add(mShortCommentFragment);
-        FragmentViewPagerAdapter fragmentViewPagerAdapter = new FragmentViewPagerAdapter(this.getSupportFragmentManager(),mFragments);
+
+        FragmentViewPagerAdapter fragmentViewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+
         mViewPager.setAdapter(fragmentViewPagerAdapter);
 
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
 
             }
 
             @Override
-            public void onPageSelected(int position) {
-
-                if (mFragments.get(position).equals(mLongCommentFragment)){
-                    setTitle("查看本文长评论");
-                }else if (mFragments.get(position).equals(mShortCommentFragment)){
-                    setTitle("查看本文短评论");
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onTabReselected(TabLayout.Tab tab) {
 
             }
         });
+
     }
 
     @Override

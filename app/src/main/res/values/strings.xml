@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BiHuNewspaper</string>
+    <string name="app_name">逼乎日报</string>
     <string name="action_settings">Settings</string>
 
     <string name="title_activity_story_detail">StoryDetailActivity</string>
@@ -10,6 +10,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="search_hint_name">例如2015年10月12日，就输入20151012</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

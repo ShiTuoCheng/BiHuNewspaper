@@ -3,11 +3,14 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.shituocheng.bihunewspaper.com.bihunewspaper.MainStoryActivity">
     <item
+        android:id="@+id/recommand_item"
+        android:title="本文的推荐人"/>
+    <item
         android:id="@+id/comment_item"
         android:title="查看本文评论"/>
     <item
-        android:id="@+id/share_item"
-        android:orderInCategory="100"
-        android:title="分享本文链接"
-        app:showAsAction="never"/>
+    android:id="@+id/menu_item_share"
+    app:showAsAction="ifRoom"
+    android:title="Share"
+    app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
 </menu>

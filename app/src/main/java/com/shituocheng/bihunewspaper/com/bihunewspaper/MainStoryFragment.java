@@ -1,12 +1,15 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +44,10 @@ public class MainStoryFragment extends Fragment {
     private ArrayList<MainStoryModel> mMainStoryModels = new ArrayList<>();
     private ListView mListView;
 
+    private AlertDialog.Builder dialog;
+
+    private ProgressDialog mProgressDialog;
+
     public static final String idData = "idData";
 
 
@@ -62,6 +69,10 @@ public class MainStoryFragment extends Fragment {
 
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_main_story,null);
         mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.mainFragment_swipeRefreshLayout);
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage("正在载入");
+        mProgressDialog.show();
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -104,6 +115,7 @@ public class MainStoryFragment extends Fragment {
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                mProgressDialog.dismiss();
                                 mSwipeRefreshLayout.setRefreshing(false);
                             }
                         });
@@ -118,6 +130,7 @@ public class MainStoryFragment extends Fragment {
                                 mainStoryModel.setTitle(eachJsonObj.getString("title"));
                                 mainStoryModel.setId(eachJsonObj.getInt("id"));
                                 JSONArray imageJsonArray = eachJsonObj.getJSONArray("images");
+
                                 mainStoryModel.setImage(imageJsonArray.getString(0));
 
                                 Log.d("IMAGE",mainStoryModel.getImage());
@@ -155,7 +168,12 @@ public class MainStoryFragment extends Fragment {
                         });
 
                     }catch (ConnectException connectE){
-                        connectE.printStackTrace();
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                networkError();
+                            }
+                        }).start();
                     }catch (JSONException jsonE){
                         jsonE.printStackTrace();
                     }
@@ -165,6 +183,27 @@ public class MainStoryFragment extends Fragment {
             }
         }).start();
 
+    }
+
+    private void networkError(){
+
+        mProgressDialog.dismiss();
+        dialog = new AlertDialog.Builder(getActivity());
+
+        dialog.setTitle("网络出错");
+
+        dialog.setMessage("网络出错，请检查网络连接");
+
+        dialog.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.create();
+
+        dialog.show();
     }
 
 }

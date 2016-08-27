@@ -14,8 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/themeDetail_listView"
-            android:divider="#2e2e2e"
-            android:dividerHeight="1dp"
+            android:divider="#ededed"
+            android:dividerHeight="5dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"/>
         <com.android.volley.toolbox.NetworkImageView

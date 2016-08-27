@@ -1,10 +1,11 @@
 package CustomAdapter;
 
-import android.content.Context;
+
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -12,6 +13,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.shituocheng.bihunewspaper.com.bihunewspaper.AppController;
 import com.shituocheng.bihunewspaper.com.bihunewspaper.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import Model.ThemeTitleModel;
@@ -19,53 +21,83 @@ import Model.ThemeTitleModel;
 /**
  * Created by shituocheng on 16/5/5.
  */
-public class ThemeTitleAdapter extends ArrayAdapter<ThemeTitleModel> {
+public class ThemeTitleAdapter extends RecyclerView.Adapter<ThemeTitleAdapter.ViewHolder> {
+
+    private OnItemClickListener mOnItemClickListener;
+
+    public interface OnItemClickListener{
+        void OnItemClick(View view, int position);
+        void OnItemLongClick(View view, int position);
+    }
+
     private ImageLoader mImageLoader = AppController.getInstance().getImageLoader();
+    private List<ThemeTitleModel> mThemeTitleModels = new ArrayList<>();
 
-    public ThemeTitleAdapter(Context context, int resource, List<ThemeTitleModel> objects) {
-        super(context, resource, objects);
-    }
-    @Override
-    public int getPosition(ThemeTitleModel item) {
-        return super.getPosition(item);
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        mOnItemClickListener = onItemClickListener;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return super.getItemId(position);
-    }
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        private NetworkImageView mNetworkImageView;
+        private TextView title_textView;
+        private TextView content_textView;
 
-    @Override
-    public ThemeTitleModel getItem(int position) {
-        return super.getItem(position);
-    }
+        public ViewHolder(View itemView) {
+            super(itemView);
+            mNetworkImageView = (NetworkImageView)itemView.findViewById(R.id.thumbnail);
+            title_textView = (TextView)itemView.findViewById(R.id.themeTitle_textView);
+            content_textView = (TextView)itemView.findViewById(R.id.themeDescription_textView);
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View view;
-        ViewHolder viewHolder;
-        if (convertView == null){
-            view = LayoutInflater.from(getContext()).inflate(R.layout.themetitlelayout,null);
-            viewHolder = new ViewHolder();
-            viewHolder.title = (TextView)view.findViewById(R.id.themeTitle_textView);
-            viewHolder.description = (TextView)view.findViewById(R.id.themeDescription_textView);
-            viewHolder.thumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail);
-            view.setTag(viewHolder);
-        }else {
-            view = convertView;
-            viewHolder = (ViewHolder) view.getTag();
         }
-        viewHolder.mThemeTitleModel = getItem(position);
-        viewHolder.title.setText(viewHolder.mThemeTitleModel.getTheme_name());
-        viewHolder.description.setText(viewHolder.mThemeTitleModel.getDescription());
-        viewHolder.thumbnail.setImageUrl(viewHolder.mThemeTitleModel.getThumbnail(),mImageLoader);
-        return view;
     }
-    class ViewHolder{
-        ThemeTitleModel mThemeTitleModel;
-        TextView title;
-        TextView description;
-        NetworkImageView thumbnail;
+
+    public ThemeTitleAdapter(List<ThemeTitleModel> themeTitleModels) {
+        mThemeTitleModels = themeTitleModels;
     }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.themetitlelayout,null);
+        ViewHolder viewHolder = new ViewHolder(view);
+        return viewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+
+        ThemeTitleModel themeTitleModel = mThemeTitleModels.get(position);
+
+        holder.mNetworkImageView.setImageUrl(themeTitleModel.getThumbnail(),mImageLoader);
+
+        holder.title_textView.setText(themeTitleModel.getTheme_name());
+
+        holder.content_textView.setText(themeTitleModel.getDescription());
+
+        if (mOnItemClickListener != null){
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = holder.getLayoutPosition();
+                    mOnItemClickListener.OnItemClick(holder.itemView,position);
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = holder.getLayoutPosition();
+                    mOnItemClickListener.OnItemLongClick(holder.itemView,position);
+                    return false;
+                }
+            });
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mThemeTitleModels.size();
+    }
+
 
 }

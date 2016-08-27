@@ -8,30 +8,48 @@
         android:name=".AppController"
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:label="逼乎日报"
-        android:logo="@drawable/icon"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".YesterdayStoryActivity">
+        <activity android:name=".YesterdayStoryActivity"
+                  android:parentActivityName="com.shituocheng.bihunewspaper.com.bihunewspaper.MainActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.shituocheng.bihunewspaper.com.bihunewspaper.MainActivity" />
+            <!-- meta tag and intent filter go into results activity -->
+            <meta-data android:name="android.app.searchable"
+                       android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
         </activity>
         <activity android:name=".detailActivity">
-
         </activity>
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity android:name=".ThemeDetailActivity">
         </activity>
         <activity android:name=".EditorDetailActivity">
         </activity>
         <activity android:name=".TotalCommentActivity">
+        </activity>
+        <activity android:name=".AboutApplicationActivity">
         </activity>
     </application>
 

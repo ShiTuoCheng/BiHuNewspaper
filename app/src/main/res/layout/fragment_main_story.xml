@@ -11,7 +11,10 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/MainStoryListView"/>
+            android:id="@+id/MainStoryListView"
+            android:padding="5dp"
+            android:dividerHeight="5dp"
+            android:divider="#ededed"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </RelativeLayout>

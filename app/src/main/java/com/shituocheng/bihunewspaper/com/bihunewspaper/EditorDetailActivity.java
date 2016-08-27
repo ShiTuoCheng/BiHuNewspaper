@@ -25,13 +25,19 @@ public class EditorDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
+        String editor_url = intent.getStringExtra("editor_url");
+
         String url = intent.getStringExtra("url");
 
         String name = intent.getStringExtra("name");
 
         actionBar.setTitle(name + "的个人主页");
 
-        editor_detail_webview.loadUrl(url);
+        if (url != null){
+            editor_detail_webview.loadUrl(url);
+        }else if (editor_url != null){
+            editor_detail_webview.loadUrl(editor_url);
+        }
     }
 
     @Override

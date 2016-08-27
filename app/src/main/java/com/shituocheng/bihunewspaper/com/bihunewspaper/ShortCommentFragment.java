@@ -1,6 +1,7 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
 
+import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -35,6 +36,8 @@ public class ShortCommentFragment extends Fragment {
     private ListView mListView;
     private ArrayList<LongCommentModel> mLongCommentModels = new ArrayList<>();
 
+    private ProgressDialog mProgressDialog;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,11 @@ public class ShortCommentFragment extends Fragment {
         View view = inflater.inflate(R.layout.activity_short_coummnet,null);
 
         mListView = (ListView)view.findViewById(R.id.short_listView);
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage("正在载入");
+        mProgressDialog.show();
+
         return view;
     }
 
@@ -104,6 +112,7 @@ public class ShortCommentFragment extends Fragment {
                                 if (jsonArrayCount == 0){
                                     shortTextView.setText("本文目前还没有短评伦……m(_ _)m");
                                 }
+                                mProgressDialog.dismiss();
                             }
                         });
                     }catch (ConnectException e){

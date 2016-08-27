@@ -1,5 +1,6 @@
 package com.shituocheng.bihunewspaper.com.bihunewspaper;
 
+import android.app.ProgressDialog;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -33,6 +34,7 @@ import Utility.Utilities;
 public class LongCommentFragment extends Fragment {
     private ListView mListView;
     private ArrayList<LongCommentModel> mLongCommentModels = new ArrayList<>();
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -45,6 +47,10 @@ public class LongCommentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_long_comment,null);
+
+        mProgressDialog = new ProgressDialog(getActivity());
+        mProgressDialog.setMessage("正在载入");
+        mProgressDialog.show();
 
         mListView = (ListView)view.findViewById(R.id.long_comment_listView);
         return view;
@@ -95,6 +101,8 @@ public class LongCommentFragment extends Fragment {
                             @Override
                             public void run() {
 
+
+
                                 mListView = (ListView)getActivity().findViewById(R.id.long_comment_listView);
                                 CustomCommentsAdapter customCommentsAdapter = new CustomCommentsAdapter(getActivity().getApplicationContext(),R.layout.long_comment_layout,mLongCommentModels);
                                 mListView.setAdapter(customCommentsAdapter);
@@ -103,6 +111,7 @@ public class LongCommentFragment extends Fragment {
                                     TextView textView = (TextView)getActivity().findViewById(R.id.note_long_textView);
                                     textView.setText("本文目前没有长评论，向右滑动查看有没有短评论吧^_^");
                                 }
+                                mProgressDialog.dismiss();
                             }
                         });
                     }catch (ConnectException e){
